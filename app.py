@@ -22,6 +22,16 @@ def clean_players(dict_list):
         new_list.append(val_list)
         val_list = []
     return new_list
+
+
+def clean_guardians(team):
+    team = team.copy()
+    for i in team:
+        if i[1].find("and") >= 0:
+            name = i.pop(1)
+            name = name.split(" and ")
+            i.insert(1, name)
+    return team
     
     
 def to_boolean(players_list):
@@ -39,6 +49,7 @@ def remove_inches(players_list):
 
 def clean_data(players_list):
     clean_players(constants.PLAYERS)    
+    clean_guardians(players_list)
     to_boolean(players_list)
     remove_inches(players_list)
     
@@ -86,17 +97,17 @@ def display_players(team):
         
 def display_guardians(team):
     guardian_names = []
-    guardian_names_2 = []
-    for i in team:
-        guardian_names.append(i[1])
-    
-    for i in guardian_names:
-        name = i
-        name = name.replace(" and",",")
-        guardian_names_2.append(name)
+    for player in team:
+        if len(player[1]) <= 2:
+            guardians = player[1]
+            for i in guardians:
+                guardian_names.append(i)
+        else:
+            guardian_names.append(player[1])
+
     names_str = ", "
     
-    return names_str.join(guardian_names_2)
+    return names_str.join(guardian_names)
 
 
 def calc_avg_height(team):
@@ -130,8 +141,9 @@ if __name__ == '__main__':
     while True:
         print("-----MENU-----\n")
         print("You have two choices:\n1) Display Team Stats\n2) Quit\n")
-        choice = int(input("Enter an option: "))
+        choice = input("Enter an option: ")
         try:
+            choice = int(choice)
             if choice < 1 or choice > 2:
                 raise ValueError("Oops! Looks like you entered a number other than 1 or 2")
         except ValueError as err:
@@ -144,8 +156,9 @@ if __name__ == '__main__':
             else:
                 while True:
                     print("1) Panthers\n2) Bandits\n3) Warriors\n")
-                    team = int(input("Pick a team by the number: "))
+                    team = input("Pick a team by the number: ")
                     try:
+                        team = int(team)
                         if team < 1 or team > len(constants.TEAMS):
                             raise ValueError("Oops! Looks like you entered a number outside the range of 1 to {}".format(len(constants.TEAMS)))
                     except ValueError as err:
